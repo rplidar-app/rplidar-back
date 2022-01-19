@@ -4,6 +4,14 @@ from abc import ABC, abstractmethod
 
 class AbstractLidarProvider(ABC):
 
+    def __init__(self, port: str, baud_rate: int = 115200, timeout=1):
+        self._port: str = port
+        self._baud_rate: int = baud_rate
+        self._timeout: int = timeout
+        self._motor_status: Union[bool, None] = None
+        self._scan_status: Union[bool, None] = None
+        self._connection_status: bool = False
+
     @property
     @abstractmethod
     def info(self) -> Union[Dict[str, Any], None]:
@@ -15,19 +23,16 @@ class AbstractLidarProvider(ABC):
         raise NotImplementedError()
 
     @property
-    @abstractmethod
     def scan_status(self) -> Union[bool, None]:
-        raise NotImplementedError()
+        return self._scan_status
 
     @property
-    @abstractmethod
-    def motor_status(self) -> Union[bool, None]:
-        raise NotImplementedError()
+    def motor_status(self) -> bool:
+        return self._motor_status
 
     @property
-    @abstractmethod
     def connection_status(self) -> bool:
-        raise NotImplementedError()
+        return self._connection_status
 
     @property
     @abstractmethod

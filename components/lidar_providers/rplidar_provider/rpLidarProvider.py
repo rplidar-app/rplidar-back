@@ -1,6 +1,5 @@
 from typing import Tuple, Any, Dict, Union
 
-import rplidar
 from rplidar import RPLidar, RPLidarException
 
 from components.abstract_classes.abstract_lidar_provider.abstractLidarProvider import AbstractLidarProvider
@@ -9,13 +8,8 @@ from components.abstract_classes.abstract_lidar_provider.abstractLidarProvider i
 class RpLidarProvider(AbstractLidarProvider):
 
     def __init__(self, port: str, baud_rate: int = 115200, timeout=1):
-        self._port: str = port
-        self._baud_rate: int = baud_rate
-        self._timeout: int = timeout
-        self._lidar_instance: Union[rplidar.RPLidar, None] = None
-        self._motor_status: Union[bool, None] = None
-        self._scan_status: Union[bool, None] = None
-        self._connection_status: bool = False
+        super().__init__(port, baud_rate, timeout)
+        self._lidar_instance: Union[RPLidar, None] = None
 
     @property
     def info(self) -> Union[Dict[str, Any], None]:
@@ -30,18 +24,6 @@ class RpLidarProvider(AbstractLidarProvider):
         return self._lidar_instance.get_health()
 
     @property
-    def scan_status(self) -> Union[bool, None]:
-        return self._scan_status
-
-    @property
-    def motor_status(self) -> bool:
-        return self._motor_status
-
-    @property
-    def connection_status(self) -> bool:
-        return self._connection_status
-
-    @property
     def scans(self) -> Union[Tuple[int, float, float], None]:
         raise NotImplementedError()
 
@@ -49,7 +31,7 @@ class RpLidarProvider(AbstractLidarProvider):
         if self._connection_status:
             return True
         try:
-            self._lidar_instance = rplidar.RPLidar(self._port, self._baud_rate, self._timeout)
+            self._lidar_instance = RPLidar(self._port, self._baud_rate, self._timeout)
         except RPLidarException:
             self._connection_status = False
             self._scan_status = None
@@ -128,19 +110,20 @@ class RpLidarProvider(AbstractLidarProvider):
 
 if __name__ == '__main__'"":
     LIDAR_PORT: str = 'COM4'  # '/dev/ttyUSB0'
-    lidar = RPLidar(LIDAR_PORT)
-
-    info = lidar.get_info()
-    print(info)
-
-    health = lidar.get_health()
-    print(health)
-
-    for i, scan in enumerate(lidar.iter_scans()):
-        print('%d: Got %d measurements' % (i, len(scan)), scan[0])
-        # if i > 10:
-        #     break
-
-    lidar.stop()
-    lidar.stop_motor()
-    lidar.disconnect()
+    lidar = RpLidarProvider(LIDAR_PORT)
+    # lidar = RPLidar(LIDAR_PORT)
+    #
+    # info = lidar.get_info()
+    # print(info)
+    #
+    # health = lidar.get_health()
+    # print(health)
+    #
+    # for i, scan in enumerate(lidar.iter_scans()):
+    #     print('%d: Got %d measurements' % (i, len(scan)), scan[0])
+    #     # if i > 10:
+    #     #     break
+    #
+    # lidar.stop()
+    # lidar.stop_motor()
+    # lidar.disconnect()
