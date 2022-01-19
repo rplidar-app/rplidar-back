@@ -1,4 +1,4 @@
-from typing import Tuple, Any, Dict
+from typing import Tuple, Any, Dict, Union
 from abc import ABC, abstractmethod
 
 
@@ -6,22 +6,22 @@ class AbstractLidarProvider(ABC):
 
     @property
     @abstractmethod
-    def info(self) -> Dict[str, Any]:
+    def info(self) -> Union[Dict[str, Any], None]:
         raise NotImplementedError()
 
     @property
     @abstractmethod
-    def health(self) -> Tuple[str, int]:
+    def health(self) -> Union[str, None]:
         raise NotImplementedError()
 
     @property
     @abstractmethod
-    def scan_status(self) -> bool:
+    def scan_status(self) -> Union[bool, None]:
         raise NotImplementedError()
 
     @property
     @abstractmethod
-    def motor_status(self) -> bool:
+    def motor_status(self) -> Union[bool, None]:
         raise NotImplementedError()
 
     @property
@@ -31,7 +31,7 @@ class AbstractLidarProvider(ABC):
 
     @property
     @abstractmethod
-    def scans(self) -> Tuple[int, float, float]:
+    def scans(self) -> Union[Tuple[int, float, float], None]:
         raise NotImplementedError()
 
     @abstractmethod
