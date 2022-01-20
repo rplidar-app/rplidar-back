@@ -1,4 +1,4 @@
-from typing import Tuple, Any, Dict, Union
+from typing import Tuple, Any, Dict, Union, Iterable
 
 from rplidar import RPLidar, RPLidarException
 
@@ -24,8 +24,34 @@ class RpLidarProvider(AbstractLidarProvider):
         return self._lidar_instance.get_health()
 
     @property
-    def scans(self) -> Union[Tuple[int, float, float], None]:
-        raise NotImplementedError()
+    def scans(self) -> Union[Iterable[tuple[int, float, float]], None]:
+        if not self._connection_status:
+            return None
+        data = []
+        try:
+            # self._lidar_instance.stop()
+            # self._lidar_instance.clear_input()
+            i = 0
+            for scan in self._lidar_instance.iter_scans():
+                data.extend(scan)
+                i += 1
+                if i == 3:
+                    self._lidar_instance.stop()
+                    break
+            # for scan in self._lidar_instance.iter_scans():
+            #     print(scan)
+            #     if len(data) > 2:
+            #         if scan[1] < data[-1][1]:
+            #             if scan[1] > data[0][1]:
+            #                 self._lidar_instance.stop()
+            #                 break
+            #     data.append(scan)
+        except RPLidarException as e:
+            print(e)
+            self.disconnect()
+            return None
+        else:
+            return data
 
     def connect(self) -> bool:
         if self._connection_status:
@@ -111,6 +137,9 @@ class RpLidarProvider(AbstractLidarProvider):
 if __name__ == '__main__'"":
     LIDAR_PORT: str = 'COM4'  # '/dev/ttyUSB0'
     lidar = RpLidarProvider(LIDAR_PORT)
+    print(lidar.info)
+    print(lidar.health)
+    print(lidar.scans)
     # lidar = RPLidar(LIDAR_PORT)
     #
     # info = lidar.get_info()

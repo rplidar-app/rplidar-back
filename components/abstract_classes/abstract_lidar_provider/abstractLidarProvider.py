@@ -1,4 +1,4 @@
-from typing import Tuple, Any, Dict, Union
+from typing import Tuple, Any, Dict, Union, Iterable
 from abc import ABC, abstractmethod
 
 
@@ -36,7 +36,7 @@ class AbstractLidarProvider(ABC):
 
     @property
     @abstractmethod
-    def scans(self) -> Union[Tuple[int, float, float], None]:
+    def scans(self) -> Union[Iterable[tuple[bool, int, float, float]], None]:
         raise NotImplementedError()
 
     @abstractmethod
