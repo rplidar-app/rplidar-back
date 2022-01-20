@@ -119,7 +119,7 @@ class RpLidarProvider(AbstractLidarProvider):
         if not self._connection_status:
             return
         try:
-            self._lidar_instance.start_motor()
+            self._lidar_instance.stop_motor()
         except RPLidarException as e:
             self.disconnect()
             raise e
