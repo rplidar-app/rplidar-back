@@ -33,6 +33,8 @@ def read_root():
 
 @app.get('/lidar/scan')
 def read_scan():
+    data = lidar.scans
+    print(data)
     return {'data': lidar.scans}
 
 
@@ -47,17 +49,17 @@ def read_info():
 
 
 @app.get('/lidar/health')
-def read_scan():
+def read_health():
     return {'data': lidar.health}
 
 
 @app.get('/lidar/motor/stop')
-def read_scan():
+def stop_motor():
     lidar.stop_motor()
 
 
 @app.get('/lidar/motor/start')
-def read_scan():
+def start_motor():
     return {'data': lidar.start_motor()}
 
 
