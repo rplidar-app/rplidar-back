@@ -2,10 +2,10 @@ from typing import Optional
 
 from fastapi import FastAPI
 
-from components.lidar_providers.rplidar_provider.rpLidarProvider import RpLidarProvider
+from components.lidar_providers.rplidar_provider.rpLidarProvider import FakeRpLidarProvider  # RpLidarProvider
 
 
-lidar = RpLidarProvider('COM4')
+lidar = FakeRpLidarProvider('COM4')  # RpLidarProvider('COM4')
 print('Lidar connection status:', lidar.connect())
 print('Lidar info:', lidar.info)
 print('Lidar health:', lidar.health)

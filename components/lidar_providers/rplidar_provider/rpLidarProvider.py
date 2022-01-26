@@ -134,6 +134,59 @@ class RpLidarProvider(AbstractLidarProvider):
             raise e
 
 
+class FakeRpLidarProvider(AbstractLidarProvider):
+
+    def __init__(self, port: str, baud_rate: int = 115200, timeout=1):
+        super().__init__(port, baud_rate, timeout)
+        self.grabbed_data: Iterable[Iterable[Tuple[int, float, float]]] = []
+        self._load_grabbed_data_from_json()
+
+    def _load_grabbed_data_from_json(self):
+        import json
+        with open('./components/lidar_providers/rplidar_provider/data.json') as f:
+            self.grabbed_data = json.load(f)
+
+    @property
+    def info(self) -> Union[Dict[str, Any], None]:
+        return None
+
+    @property
+    def health(self) -> Union[str, None]:
+        return 'Fake lidar health is fucking amazing!'
+
+    @property
+    def scans(self) -> Union[Iterable[Tuple[int, float, float]], None]:
+        i = 0
+        data: list[Tuple[int, float, float]] = []
+        for scan in self.grabbed_data:
+            i += 1
+            data.extend(scan)
+            if i == 3:
+                break
+        return data
+
+    def connect(self) -> bool:
+        return True
+
+    def disconnect(self) -> None:
+        return
+
+    def start_scan(self) -> bool:
+        return True
+
+    def stop_scan(self) -> None:
+        return
+
+    def start_motor(self) -> bool:
+        return True
+
+    def stop_motor(self) -> None:
+        return
+
+    def reset(self) -> None:
+        return
+
+
 if __name__ == '__main__'"":
     LIDAR_PORT: str = 'COM4'  # '/dev/ttyUSB0'
     lidar = RpLidarProvider(LIDAR_PORT)
