@@ -1,6 +1,7 @@
 from typing import Optional
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from components.lidar_providers.rplidar_provider.rpLidarProvider import FakeRpLidarProvider  # RpLidarProvider
 
@@ -10,7 +11,19 @@ print('Lidar connection status:', lidar.connect())
 print('Lidar info:', lidar.info)
 print('Lidar health:', lidar.health)
 
+origins = [
+    '*',
+]
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
