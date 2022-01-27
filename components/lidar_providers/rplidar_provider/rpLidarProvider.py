@@ -34,7 +34,6 @@ class RpLidarProvider(AbstractLidarProvider):
             print('RpLidarProvider._poll_lidar_scans:', e)
             with self._scan_status_lock:
                 self._scan_status = False
-            # self.disconnect()
 
     @property
     def info(self) -> Union[Dict[str, Any], None]:
@@ -52,30 +51,6 @@ class RpLidarProvider(AbstractLidarProvider):
         with self._data_buffer_lock:
             data = self._data_buffer
         return data
-        # try:
-        #     # self._lidar_instance.stop()
-        #     # self._lidar_instance.clear_input()
-        #     i = 0
-        #     for scan in self._lidar_instance.iter_scans():
-        #         data.extend(scan)
-        #         i += 1
-        #         if i == 3:
-        #             self._lidar_instance.stop()
-        #             break
-        #     # for scan in self._lidar_instance.iter_scans():
-        #     #     print(scan)
-        #     #     if len(data) > 2:
-        #     #         if scan[1] < data[-1][1]:
-        #     #             if scan[1] > data[0][1]:
-        #     #                 self._lidar_instance.stop()
-        #     #                 break
-        #     #     data.append(scan)
-        # except RPLidarException as e:
-        #     print(e)
-        #     self.disconnect()
-        #     return None
-        # else:
-        #     return data
 
     def connect(self) -> bool:
         if self._connection_status:
@@ -113,12 +88,6 @@ class RpLidarProvider(AbstractLidarProvider):
             if self._scan_status:
                 return True
             else:
-                # try:
-                #     self._lidar_instance.reset()
-                # except RPLidarException as e:
-                #     print(e)
-                #     self.disconnect()
-                # else:
                 self._scan_status = True
                 self._lidar_polling_thread.start()
                 return True
@@ -128,13 +97,6 @@ class RpLidarProvider(AbstractLidarProvider):
         if self._connection_status:
             with self._scan_status_lock:
                 self._scan_status = False
-            # try:
-            #     self._lidar_instance.stop()
-            # except RPLidarException as e:
-            #     self.disconnect()
-            #     raise e
-            # else:
-            #     self._scan_status = False
 
     def start_motor(self) -> bool:
         if not self._connection_status:
@@ -224,19 +186,3 @@ if __name__ == '__main__'"":
     print(lidar.info)
     print(lidar.health)
     print(lidar.scans)
-    # lidar = RPLidar(LIDAR_PORT)
-    #
-    # info = lidar.get_info()
-    # print(info)
-    #
-    # health = lidar.get_health()
-    # print(health)
-    #
-    # for i, scan in enumerate(lidar.iter_scans()):
-    #     print('%d: Got %d measurements' % (i, len(scan)), scan[0])
-    #     # if i > 10:
-    #     #     break
-    #
-    # lidar.stop()
-    # lidar.stop_motor()
-    # lidar.disconnect()
