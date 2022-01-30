@@ -1,4 +1,4 @@
-from typing import Tuple, Any, Dict, Union, Iterable
+from typing import Tuple, Any, Dict, Union, Iterable, List
 import threading
 from rplidar import RPLidar, RPLidarException
 from components.abstract_classes.abstract_lidar_provider.abstractLidarProvider import AbstractLidarProvider
@@ -131,7 +131,8 @@ class FakeRpLidarProvider(AbstractLidarProvider):
 
     def __init__(self, port: str, baud_rate: int = 115200, timeout=1):
         super().__init__(port, baud_rate, timeout)
-        self.grabbed_data: Iterable[Iterable[Tuple[int, float, float]]] = []
+        self.grabbed_data: List[List[Tuple[int, float, float]]] = []
+        self.counter = 0
         self._load_grabbed_data_from_json()
 
 
@@ -150,14 +151,11 @@ class FakeRpLidarProvider(AbstractLidarProvider):
 
     @property
     def scans(self) -> Union[Iterable[Tuple[int, float, float]], None]:
-        i = 0
-        data: list[Tuple[int, float, float]] = []
-        for scan in self.grabbed_data:
-            i += 1
-            data.extend(scan)
-            if i == 3:
-                break
-        return data
+        scan = self.grabbed_data[self.counter]
+        self.counter += 1
+        if self.counter >= len(self.grabbed_data):
+            self.counter = 0
+        return scan
 
     def connect(self) -> bool:
         return True
