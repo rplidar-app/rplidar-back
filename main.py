@@ -3,10 +3,11 @@ from typing import Optional
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from components.lidar_providers.rplidar_provider.rpLidarProvider import FakeRpLidarProvider  # RpLidarProvider
+from components.lidar_providers.rplidar_provider.rpLidarProvider import FakeRpLidarProvider, RpLidarProvider
 
 
-lidar = FakeRpLidarProvider('COM4')  # RpLidarProvider('COM4')
+# lidar = FakeRpLidarProvider('COM4')  # RpLidarProvider('COM4')
+lidar = RpLidarProvider('/dev/ttyUSB0')
 print('Lidar connection status:', lidar.connect())
 print('Lidar info:', lidar.info)
 print('Lidar health:', lidar.health)
@@ -34,8 +35,7 @@ def read_root():
 @app.get('/lidar/scan')
 def read_scan():
     data = lidar.scans
-    print(data)
-    return {'data': lidar.scans}
+    return lidar.scans
 
 
 @app.get('/lidar/reset')

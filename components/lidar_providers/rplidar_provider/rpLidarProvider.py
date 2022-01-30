@@ -134,6 +134,7 @@ class FakeRpLidarProvider(AbstractLidarProvider):
         self.grabbed_data: Iterable[Iterable[Tuple[int, float, float]]] = []
         self._load_grabbed_data_from_json()
 
+
     def _load_grabbed_data_from_json(self):
         import json
         with open('./components/lidar_providers/rplidar_provider/data.json') as f:
