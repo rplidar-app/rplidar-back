@@ -36,7 +36,10 @@ class AbstractLidarProvider(ABC):
 
     @property
     @abstractmethod
-    def scans(self) -> Union[Iterable[tuple[bool, int, float, float]], None]:
+    def scans(self) -> Union[Iterable[tuple[float, float, int, float, float]], None]:
+        """
+            :return: a list of tuples. Every tuple contains: x, y, quality, angle, distance
+        """
         raise NotImplementedError()
 
     @abstractmethod
