@@ -6,7 +6,7 @@ class FakeRpLidarProvider(AbstractLidarProvider):
 
     def __init__(self, port: str, baud_rate: int = 115200, timeout=1):
         super().__init__(port, baud_rate, timeout)
-        self.grabbed_data: List[List[Tuple[float, float, int, float, float]]] = []
+        self.grabbed_data: List[List[Tuple[int, float, float]]] = []
         self.counter = 0
         self._load_grabbed_data_from_json()
 
@@ -25,7 +25,8 @@ class FakeRpLidarProvider(AbstractLidarProvider):
 
     @property
     def scans(self) -> Union[Iterable[Tuple[float, float, int, float, float]], None]:
-        scan = self.grabbed_data[self.counter]
+        scan = [AbstractLidarProvider._convert_point_to_output_format(point[0], point[1], point[2])
+                for point in self.grabbed_data[self.counter]]
         self.counter += 1
         if self.counter >= len(self.grabbed_data):
             self.counter = 0
