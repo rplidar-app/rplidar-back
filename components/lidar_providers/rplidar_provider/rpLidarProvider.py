@@ -27,7 +27,8 @@ class RpLidarProvider(AbstractLidarProvider):
                             if self._scan_status is False:
                                 self._lidar_instance.stop()
                                 break
-                        local_data.append(point)
+                        local_data.append(AbstractLidarProvider._convert_point_to_output_format(point[0], point[1],
+                                                                                                point[2]))
                     with self._data_buffer_lock:
                         self._data_buffer = local_data
         except RPLidarException as e:
