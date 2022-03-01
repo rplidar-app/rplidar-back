@@ -2,12 +2,13 @@ from typing import Tuple, Any, Dict, Union, Iterable, List
 import threading
 from rplidar import RPLidar, RPLidarException
 from components.abstract_classes.abstract_lidar_provider.abstractLidarProvider import AbstractLidarProvider
+from components.work_area_provider.workAreaProvider import WorkAreaProvider
 
 
 class RpLidarProvider(AbstractLidarProvider):
 
-    def __init__(self, port: str, baud_rate: int = 115200, timeout=1):
-        super().__init__(port, baud_rate, timeout)
+    def __init__(self, work_area_provider: WorkAreaProvider, port: str, baud_rate: int = 115200, timeout=1):
+        super().__init__(work_area_provider, port, baud_rate, timeout)
         self._info: Union[Dict[str, Any], None] = None
         self._health: Union[str, None] = None
         self._lidar_instance: Union[RPLidar, None] = None
