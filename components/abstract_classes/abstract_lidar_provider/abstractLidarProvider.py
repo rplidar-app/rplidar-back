@@ -1,6 +1,7 @@
 from typing import Tuple, Any, Dict, Union, Iterable, List
 from abc import ABC, abstractmethod
 from math import cos, sin, pi
+from components.work_area_provider.workAreaProvider import WorkAreaProvider
 
 
 DEGREES_TO_RADIANS_FACTOR: float = pi/180
@@ -8,13 +9,14 @@ DEGREES_TO_RADIANS_FACTOR: float = pi/180
 
 class AbstractLidarProvider(ABC):
 
-    def __init__(self, port: str, baud_rate: int = 115200, timeout=1):
+    def __init__(self, work_area_provider: WorkAreaProvider, port: str, baud_rate: int = 115200, timeout=1, ):
         self._port: str = port
         self._baud_rate: int = baud_rate
         self._timeout: int = timeout
         self._motor_status: Union[bool, None] = None
         self._scan_status: Union[bool, None] = None
         self._connection_status: bool = False
+        self._work_area: WorkAreaProvider = work_area_provider
 
     @property
     @abstractmethod
