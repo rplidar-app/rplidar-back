@@ -5,10 +5,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from components.lidar_providers.rplidar_provider.rpLidarProvider import RpLidarProvider
 from components.lidar_providers.fake_rplidar_provider.fakeRpLidarProvider import FakeRpLidarProvider
+from components.work_area_provider.workAreaProvider import WorkAreaProvider
 
 
 # lidar = RpLidarProvider('COM4')
-lidar = FakeRpLidarProvider('COM4')
+work_area = WorkAreaProvider()
+lidar = FakeRpLidarProvider(work_area, 'COM4')
 # lidar = RpLidarProvider('/dev/ttyUSB0')
 print('Lidar connection status:', lidar.connect())
 print('Lidar info:', lidar.info)
