@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List, Dict, Union
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -38,7 +38,6 @@ def read_root():
 
 @app.get('/lidar/scan')
 def read_scan():
-    data = lidar.scans
     return lidar.scans
 
 
@@ -65,6 +64,19 @@ def stop_motor():
 @app.get('/lidar/motor/start')
 def start_motor():
     return {'data': lidar.start_motor()}
+
+
+@app.get('/work_area/get')
+def get_work_area():
+    print(work_area.data)
+    return work_area.data
+
+
+@app.post('/work_area/set')
+def set_work_area(body: List[Dict[str, Union[int, float]]]):
+    print(body)
+    work_area.data = body
+    return True
 
 
 @app.get("/items/{item_id}")
