@@ -2,6 +2,7 @@ from typing import Tuple, Any, Dict, Union, Iterable, List
 from abc import ABC, abstractmethod
 from math import cos, sin, pi
 from components.work_area_provider.workAreaProvider import WorkAreaProvider
+from components.points_filter_service.pointsFilterService import PointsFilterService
 
 
 DEGREES_TO_RADIANS_FACTOR: float = pi/180
@@ -17,6 +18,7 @@ class AbstractLidarProvider(ABC):
         self._scan_status: Union[bool, None] = None
         self._connection_status: bool = False
         self._work_area: WorkAreaProvider = work_area_provider
+        self._filter: PointsFilterService = PointsFilterService(self._work_area)
 
     @property
     @abstractmethod
