@@ -66,7 +66,7 @@ class WorkAreaProvider:
     def _update_non_horizontal_lines(self) -> None:
         self._none_horizontal_lines = []
         for i in range(len(self._data)):
-            if i > len(self._data) - 1:
+            if i < len(self._data) - 1:
                 if self._data[i]['x'] != self._data[i + 1]['x']:
                     self._none_horizontal_lines.append((
                         self._data[i]['x'],
