@@ -8,11 +8,10 @@ class PointsFilterService:
     def __init__(self, work_area_provider: WorkAreaProvider):
         self._work_area: WorkAreaProvider = work_area_provider
 
-    def filter(self, points: Iterable[Tuple[float, float, int, float, float]]) ->\
-            Tuple[
-                List[Tuple[float, float, int, float, float]],
-                List[Tuple[float, float, int, float, float]]
-            ]:
+    def filter(self, points: Iterable[Tuple[float, float, int, float, float]]) -> Tuple[
+        List[Tuple[float, float, int, float, float]],
+        List[Tuple[float, float, int, float, float]]
+    ]:
         inside_points: List[Tuple[float, float, int, float, float]] = []
         outside_points: List[Tuple[float, float, int, float, float]] = []
         for point in points:
@@ -28,7 +27,7 @@ class PointsFilterService:
         for line in self._work_area.none_horizontal_lines:
             if line_segments_intersection(x, y, min_x, y, line[0], line[1], line[2], line[3]):
                 intersections_counter += 1
-        if intersections_counter%2 == 0:
+        if intersections_counter % 2 == 0:
             return False
         else:
             return True
