@@ -7,7 +7,13 @@ class WorkAreaProvider:
     def __init__(self):
         self._file_path: str = './env/work_area.json'
         self._data: List[Dict[str, Union[int, float]]] = []
+        self._min_x: float = 0.0
         self._load_data()
+        self._update_min_x()
+
+    @property
+    def min_x(self) -> float:
+        return self._min_x
 
     @property
     def data(self) -> List[Dict[str, Union[int, float]]]:
@@ -17,6 +23,7 @@ class WorkAreaProvider:
     def data(self, points: List[Dict[str, Union[int, float]]]):
         self._data = points
         self._store_data()
+        self._update_min_x()
 
     def _load_data(self) -> bool:
         try:
@@ -43,3 +50,6 @@ class WorkAreaProvider:
         except IOError as e:
             print('ERROR: can\'t store the work area into a file %s\n' % self._file_path,
                   'Exception text: %s' % str(e))
+
+    def _update_min_x(self) -> None:
+        self._min_x = min(self._data, key=lambda point: point.x)
