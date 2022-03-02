@@ -10,7 +10,8 @@ class WorkAreaProvider:
         self._min_x: float = 0.0
         self._none_horizontal_lines: List[Tuple[float, float, float, float]] = []
         self._load_data()
-        self._update_state()
+        if len(self._data) != 0:
+            self._update_state()
 
     @property
     def min_x(self) -> float:
@@ -60,17 +61,16 @@ class WorkAreaProvider:
         self._update_non_horizontal_lines()
 
     def _update_min_x(self) -> None:
-        self._min_x = min(self._data, key=lambda point: point.x)
-        self._min_x -= 1.
+        self._min_x = min(self._data, key=lambda point: point['x'])['x'] - 1
 
     def _update_non_horizontal_lines(self) -> None:
         self._none_horizontal_lines = []
         for i in range(len(self._data)):
             if i > len(self._data) - 1:
-                if self._data[i].x != self._data[i + 1].x:
+                if self._data[i]['x'] != self._data[i + 1]['x']:
                     self._none_horizontal_lines.append((
-                        self._data[i].x,
-                        self._data[i].y,
-                        self._data[i + 1].x,
-                        self._data[i + 1].y,
+                        self._data[i]['x'],
+                        self._data[i]['y'],
+                        self._data[i + 1]['x'],
+                        self._data[i + 1]['y'],
                     ))
