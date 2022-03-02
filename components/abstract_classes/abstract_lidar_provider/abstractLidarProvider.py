@@ -4,8 +4,7 @@ from math import cos, sin, pi
 from components.work_area_provider.workAreaProvider import WorkAreaProvider
 from components.points_filter_service.pointsFilterService import PointsFilterService
 
-
-DEGREES_TO_RADIANS_FACTOR: float = pi/180
+DEGREES_TO_RADIANS_FACTOR: float = pi / 180
 
 
 class AbstractLidarProvider(ABC):
@@ -44,9 +43,14 @@ class AbstractLidarProvider(ABC):
 
     @property
     @abstractmethod
-    def scans(self) -> Union[Iterable[Tuple[float, float, int, float, float]], None]:
+    def scans(self) -> Union[
+        Tuple[List[Tuple[float, float, int, float, float]], List[Tuple[float, float, int, float, float]]],
+        None
+    ]:
         """
-            :return: a list of tuples. Every tuple contains: x, y, quality, angle, distance
+            :return: A tuple containing list of point-tuples. The first list -- points inside the work area, the second
+                     list -- points outside the work area.
+                     Every point-tuple contains: x, y, quality, angle, distance
         """
         raise NotImplementedError()
 
@@ -86,7 +90,7 @@ class AbstractLidarProvider(ABC):
         :param distance: a distance from the centre of the lidar to the point
         :return: a tuple containing X and Y coordinates of the given point
         """
-        return -distance*cos(angle*DEGREES_TO_RADIANS_FACTOR), -distance*sin(angle*DEGREES_TO_RADIANS_FACTOR)
+        return -distance * cos(angle * DEGREES_TO_RADIANS_FACTOR), -distance * sin(angle * DEGREES_TO_RADIANS_FACTOR)
 
     @staticmethod
     def _convert_point_to_output_format(quality: int, angle: float, distance: float) -> Tuple[float, float, int, float,
