@@ -29,6 +29,7 @@ class WorkAreaProvider:
     def data(self, points: List[Dict[str, Union[int, float]]]):
         self._data = points
         self._store_data()
+        self._update_state()
 
     def _load_data(self) -> bool:
         try:
