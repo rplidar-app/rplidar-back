@@ -38,7 +38,8 @@ def read_root():
 
 @app.get('/lidar/scan')
 def read_scan():
-    return lidar.scans
+    scans = lidar.scans
+    return scans.represent_points_as_tuples()
 
 
 @app.get('/lidar/reset')
