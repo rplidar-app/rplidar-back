@@ -1,6 +1,8 @@
-from typing import List, Union, Iterable, Tuple
+from typing import List, Union, Dict, Optional
 from components.work_area_provider.workAreaProvider import WorkAreaProvider
 from components.geometry import line_segments_intersection
+from models.lidarScanPoint import LidarScanPoint
+from models.lidarScans import LidarScans
 
 
 class PointsFilterService:
@@ -8,18 +10,15 @@ class PointsFilterService:
     def __init__(self, work_area_provider: WorkAreaProvider):
         self._work_area: WorkAreaProvider = work_area_provider
 
-    def filter(self, points: Iterable[Tuple[float, float, int, float, float]]) -> Tuple[
-        List[Tuple[float, float, int, float, float]],
-        List[Tuple[float, float, int, float, float]]
-    ]:
-        inside_points: List[Tuple[float, float, int, float, float]] = []
-        outside_points: List[Tuple[float, float, int, float, float]] = []
+    def filter(self, points: List[LidarScanPoint]) -> Optional[LidarScans]:
+        inside_points: List[LidarScanPoint] = []
+        outside_points: List[LidarScanPoint] = []
         for point in points:
-            if self.is_point_inside_work_area(point[0], point[1]):
+            if self.is_point_inside_work_area(point.x, point.y):
                 inside_points.append(point)
             else:
                 outside_points.append(point)
-        return inside_points, outside_points
+        return LidarScans(inside=inside_points, outside=outside_points)
 
     def is_point_inside_work_area(self, x: float, y: float) -> bool:
         intersections_counter: int = 0
