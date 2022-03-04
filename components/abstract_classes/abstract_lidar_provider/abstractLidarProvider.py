@@ -1,6 +1,7 @@
-from typing import Tuple, Any, Dict, Union, Iterable, List
+from typing import Any, Dict, Union, List, Optional
 from abc import ABC, abstractmethod
-from math import cos, sin, pi
+from math import pi
+from models.lidarScans import LidarScans
 from components.work_area_provider.workAreaProvider import WorkAreaProvider
 from components.points_filter_service.pointsFilterService import PointsFilterService
 
@@ -43,14 +44,9 @@ class AbstractLidarProvider(ABC):
 
     @property
     @abstractmethod
-    def scans(self) -> Union[
-        Tuple[List[Tuple[float, float, int, float, float]], List[Tuple[float, float, int, float, float]]],
-        None
-    ]:
+    def scans(self) -> Optional[LidarScans]:
         """
-            :return: A tuple containing list of point-tuples. The first list -- points inside the work area, the second
-                     list -- points outside the work area.
-                     Every point-tuple contains: x, y, quality, angle, distance
+            :return: Lidar scans
         """
         raise NotImplementedError()
 
@@ -81,27 +77,3 @@ class AbstractLidarProvider(ABC):
     @abstractmethod
     def reset(self) -> None:
         raise NotImplementedError()
-
-    @staticmethod
-    def _get_coordinates(angle: float, distance: float) -> Tuple[float, float]:
-        """
-        A method that calculates X and Y coordinates of the point given by angle and distance
-        :param angle: an angle of the point in radians
-        :param distance: a distance from the centre of the lidar to the point
-        :return: a tuple containing X and Y coordinates of the given point
-        """
-        return -distance * cos(angle * DEGREES_TO_RADIANS_FACTOR), -distance * sin(angle * DEGREES_TO_RADIANS_FACTOR)
-
-    @staticmethod
-    def _convert_point_to_output_format(quality: int, angle: float, distance: float) -> Tuple[float, float, int, float,
-                                                                                              float]:
-        """
-        A static method that converts point to the output data format with adding calculated X and Y coordinates of the
-        input point
-        :param quality:
-        :param angle:
-        :param distance:
-        :return: a tuple containing X and Y coordinates, quality, angle and distance of the given point
-        """
-        x, y = AbstractLidarProvider._get_coordinates(angle, distance)
-        return x, y, quality, angle, distance
