@@ -13,7 +13,7 @@ def line_segments_intersection(x1: float, y1: float, x2: float, y2: float, x3: f
     :param y3: Y coordinate of the first point of the second line
     :param x4: X coordinate of the second point of the second line
     :param y4: Y coordinate of the second point of the second line
-    :return: a tuple with x and y intersection coordinates, or None if there is no intersection between lines
+    :return: a tuple with x and y intersection coordinates, or None if there is no intersection between the lines
     """
     a_dx = x2 - x1
     a_dy = y2 - y1
