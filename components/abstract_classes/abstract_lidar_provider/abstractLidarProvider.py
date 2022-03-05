@@ -4,6 +4,7 @@ from math import pi
 from models.lidarScans import LidarScans
 from components.work_area_provider.workAreaProvider import WorkAreaProvider
 from components.points_filter_service.pointsFilterService import PointsFilterService
+from components.points_clustering_service.pointsClusteringService import PointsClusteringService
 
 DEGREES_TO_RADIANS_FACTOR: float = pi / 180
 
@@ -19,6 +20,7 @@ class AbstractLidarProvider(ABC):
         self._connection_status: bool = False
         self._work_area: WorkAreaProvider = work_area_provider
         self._filter: PointsFilterService = PointsFilterService(self._work_area)
+        self._clustering: PointsClusteringService = PointsClusteringService()
 
     @property
     @abstractmethod
