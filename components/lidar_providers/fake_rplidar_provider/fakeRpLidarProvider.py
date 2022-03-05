@@ -1,4 +1,4 @@
-from typing import Any, Dict, Union, List, Optional
+from typing import Any, Dict, List, Optional
 from components.abstract_classes.abstract_lidar_provider.abstractLidarProvider import AbstractLidarProvider
 from components.work_area_provider.workAreaProvider import WorkAreaProvider
 from models.lidarScanPoint import LidarScanPoint
@@ -23,11 +23,11 @@ class FakeRpLidarProvider(AbstractLidarProvider):
             ]
 
     @property
-    def info(self) -> Union[Dict[str, Any], None]:
+    def info(self) -> Optional[Dict[str, Any]]:
         return None
 
     @property
-    def health(self) -> Union[str, None]:
+    def health(self) -> Optional[str]:
         return 'Fake lidar health is fucking amazing!'
 
     @property
@@ -36,7 +36,12 @@ class FakeRpLidarProvider(AbstractLidarProvider):
         self.counter += 1
         if self.counter >= len(self.grabbed_data):
             self.counter = 0
-        return self._filter.filter(scan)
+        filtered_scans: Optional[LidarScans] = self._filter.filter(scan)
+        labels = self._clustering.get_labels(filtered_scans.inside)
+        filtered_scans.cluster_labels = labels
+        # filtered_scans.cluster_labels = self._clustering.get_labels(filtered_scans.inside)
+        # self._clustering.do(filtered_scans.inside)
+        return filtered_scans
 
     def connect(self) -> bool:
         return True
