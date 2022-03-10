@@ -3,6 +3,7 @@ from components.abstract_classes.abstract_lidar_provider.abstractLidarProvider i
 from components.work_area_provider.workAreaProvider import WorkAreaProvider
 from models.lidarScanPoint import LidarScanPoint
 from models.lidarScans import LidarScans
+from models.lidarScan import LidarScan
 
 
 class FakeRpLidarProvider(AbstractLidarProvider):
@@ -31,17 +32,18 @@ class FakeRpLidarProvider(AbstractLidarProvider):
         return 'Fake lidar health is fucking amazing!'
 
     @property
-    def scans(self) -> Optional[LidarScans]:
+    def scans(self) -> Optional[LidarScan]:
         scan = self.grabbed_data[self.counter]
         self.counter += 1
         if self.counter >= len(self.grabbed_data):
             self.counter = 0
         filtered_scans: Optional[LidarScans] = self._filter.filter(scan)
         labels = self._clustering.get_labels(filtered_scans.inside)
-        filtered_scans.cluster_labels = labels
+        # filtered_scans.cluster_labels = labels
+        result = LidarScan(filtered_scans.inside, filtered_scans.outside, labels)
         # filtered_scans.cluster_labels = self._clustering.get_labels(filtered_scans.inside)
         # self._clustering.do(filtered_scans.inside)
-        return filtered_scans
+        return result
 
     def connect(self) -> bool:
         return True
