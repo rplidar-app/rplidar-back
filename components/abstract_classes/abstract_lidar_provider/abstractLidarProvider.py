@@ -1,7 +1,7 @@
 from typing import Any, Dict, Union, List, Optional
 from abc import ABC, abstractmethod
 from math import pi
-from models.lidarScans import LidarScans
+from models.lidarScan import LidarScan
 from components.work_area_provider.workAreaProvider import WorkAreaProvider
 from components.points_filter_service.pointsFilterService import PointsFilterService
 from components.points_clustering_service.pointsClusteringService import PointsClusteringService
@@ -46,7 +46,7 @@ class AbstractLidarProvider(ABC):
 
     @property
     @abstractmethod
-    def scans(self) -> Optional[LidarScans]:
+    def scans(self) -> Optional[LidarScan]:
         """
             :return: Lidar scans
         """
