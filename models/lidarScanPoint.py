@@ -1,4 +1,4 @@
-from typing import Union, Optional, List, Tuple, Dict
+from typing import Union, Optional, Tuple, Dict
 from math import cos, sin, pi
 
 
