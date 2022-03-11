@@ -29,5 +29,5 @@ class LidarScan:
         return {
             'untracked_points': [point.as_tuple for point in self.untracked_points],
             'ungrouped_points': [point.as_tuple for point in self.ungrouped_points],
-            'objects': [object.represent_points_as_tuples() for object in self.objects]
+            'objects': [obj.represent_points_as_tuples() for obj in self.objects]
         }
