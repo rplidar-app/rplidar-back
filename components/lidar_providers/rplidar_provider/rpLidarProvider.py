@@ -1,8 +1,12 @@
-from typing import Tuple, Any, Dict, Union, Iterable, List
 import threading
+from typing import Any, Dict, Union, Optional
+
 from rplidar import RPLidar, RPLidarException
+
 from components.abstract_classes.abstract_lidar_provider.abstractLidarProvider import AbstractLidarProvider
 from components.work_area_provider.workAreaProvider import WorkAreaProvider
+from models.lidarScan import LidarScan
+from models.lidarScanPoint import LidarScanPoint
 
 
 class RpLidarProvider(AbstractLidarProvider):
@@ -13,7 +17,7 @@ class RpLidarProvider(AbstractLidarProvider):
         self._health: Union[str, None] = None
         self._lidar_instance: Union[RPLidar, None] = None
         self._lidar_polling_thread: Union[threading.Thread, None] = None
-        self._data_buffer = []
+        self._data_buffer: Optional[LidarScan] = None
         self._data_buffer_lock = threading.Lock()
         self._scan_status_lock = threading.Lock()
         self._lidar_instance_lock = threading.Lock()
@@ -22,16 +26,21 @@ class RpLidarProvider(AbstractLidarProvider):
         try:
             with self._lidar_instance_lock:
                 for scan in self._lidar_instance.iter_scans():
-                    local_data = []
+                    points_inside_work_area = []
+                    points_outside_work_area = []
                     for point in scan:
                         with self._scan_status_lock:
                             if self._scan_status is False:
                                 self._lidar_instance.stop()
                                 break
-                        local_data.append(AbstractLidarProvider._convert_point_to_output_format(point[0], point[1],
-                                                                                                point[2]))
+                        point_object = LidarScanPoint(quality=point[0], angle=point[1], distance=point[2])
+                        if self._filter.is_point_inside_work_area(point_object.x, point_object.y):
+                            points_inside_work_area.append(point_object)
+                        else:
+                            points_outside_work_area.append(point_object)
                     with self._data_buffer_lock:
-                        self._data_buffer = local_data
+                        labels = self._clustering.get_labels(points_inside_work_area)
+                        self._data_buffer = LidarScan(points_inside_work_area, points_outside_work_area, labels)
         except RPLidarException as e:
             print('RpLidarProvider._poll_lidar_scans:', e)
             with self._scan_status_lock:
@@ -46,10 +55,10 @@ class RpLidarProvider(AbstractLidarProvider):
         return self._health
 
     @property
-    def scans(self) -> Union[Iterable[tuple[int, float, float]], None]:
+    def scans(self) -> Optional[LidarScan]:
         if not self._connection_status:
             return None
-        data = []
+        data = None
         with self._data_buffer_lock:
             data = self._data_buffer
         return data
