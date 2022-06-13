@@ -1,12 +1,18 @@
 import threading
 from typing import Any, Dict, Union, Optional
 
-from rplidar import RPLidar, RPLidarException
+from .rplidar import RPLidar, RPLidarException
 
 from components.abstract_classes.abstract_lidar_provider.abstractLidarProvider import AbstractLidarProvider
 from components.work_area_provider.workAreaProvider import WorkAreaProvider
 from models.lidarScan import LidarScan
 from models.lidarScanPoint import LidarScanPoint
+
+
+import json
+
+counter = 0
+list_to_dump = []
 
 
 class RpLidarProvider(AbstractLidarProvider):
@@ -23,28 +29,41 @@ class RpLidarProvider(AbstractLidarProvider):
         self._lidar_instance_lock = threading.Lock()
 
     def _poll_lidar_scans(self):
-        try:
-            with self._lidar_instance_lock:
-                for scan in self._lidar_instance.iter_scans():
-                    points_inside_work_area = []
-                    points_outside_work_area = []
-                    for point in scan:
-                        with self._scan_status_lock:
-                            if self._scan_status is False:
-                                self._lidar_instance.stop()
-                                break
-                        point_object = LidarScanPoint(quality=point[0], angle=point[1], distance=point[2])
-                        if self._filter.is_point_inside_work_area(point_object.x, point_object.y):
-                            points_inside_work_area.append(point_object)
-                        else:
-                            points_outside_work_area.append(point_object)
-                    with self._data_buffer_lock:
-                        labels = self._clustering.get_labels(points_inside_work_area)
-                        self._data_buffer = LidarScan(points_inside_work_area, points_outside_work_area, labels)
-        except RPLidarException as e:
-            print('RpLidarProvider._poll_lidar_scans:', e)
-            with self._scan_status_lock:
-                self._scan_status = False
+            while True:
+                try:
+                    with self._lidar_instance_lock:
+                        for scan in self._lidar_instance.iter_scans():
+                            points_inside_work_area = []
+                            points_outside_work_area = []
+                            for point in scan:
+                                with self._scan_status_lock:
+                                    if self._scan_status is False:
+                                        self._lidar_instance.stop()
+                                        break
+                                point_object = LidarScanPoint(quality=point[0], angle=point[1], distance=point[2])
+                                if self._filter.is_point_inside_work_area(point_object.x, point_object.y):
+                                    points_inside_work_area.append(point_object)
+                                else:
+                                    points_outside_work_area.append(point_object)
+                            with self._data_buffer_lock:
+                                labels = self._clustering.get_labels(points_inside_work_area)
+                                self._data_buffer = LidarScan(points_inside_work_area, points_outside_work_area, labels)
+                                # scan = self._data_buffer
+                                # global list_to_dump
+                                # list_to_dump.append(scan.represent_points_as_tuples()['objects'][0])
+                                # global counter
+                                # counter += 1
+                                # print(counter)
+                                # if counter <= 999:
+                                #     list_to_dump.append(scan.represent_points_as_tuples()['objects'][0])
+                                # if counter == 999:
+                                #     with open('5dm_1.2hz_dump.json', 'a') as f:
+                                #         json.dump(list_to_dump, f)
+                except RPLidarException as e:
+                    continue
+                    # print('RpLidarProvider._poll_lidar_scans:', e)
+                    # with self._scan_status_lock:
+                    #     self._scan_status = False
 
     @property
     def info(self) -> Union[Dict[str, Any], None]:
@@ -136,6 +155,10 @@ class RpLidarProvider(AbstractLidarProvider):
         except RPLidarException as e:
             self.disconnect()
             raise e
+
+    def __del__(self):
+        with self._scan_status_lock:
+            self.disconnect()
 
 
 if __name__ == '__main__'"":

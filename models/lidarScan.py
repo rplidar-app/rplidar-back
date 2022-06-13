@@ -5,9 +5,9 @@ from models.lidarTrackedObject import LidarTrackedObject
 
 class LidarScan:
     def __init__(self,
-                 points_inside_work_area: List[LidarScanPoint],
-                 points_outside_work_area: List[LidarScanPoint],
-                 cluster_labels: List[int]):
+                 points_inside_work_area: List[LidarScanPoint] = [],
+                 points_outside_work_area: List[LidarScanPoint] = [],
+                 cluster_labels: List[int] = []):
         self.untracked_points: List[LidarScanPoint] = points_outside_work_area[:]
         self.ungrouped_points: List[LidarScanPoint] = []
         self.objects: List[LidarTrackedObject] = []

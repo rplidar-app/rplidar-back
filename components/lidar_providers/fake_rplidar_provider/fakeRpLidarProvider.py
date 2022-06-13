@@ -16,12 +16,35 @@ class FakeRpLidarProvider(AbstractLidarProvider):
 
     def _load_grabbed_data_from_json(self):
         import json
-        with open('./components/lidar_providers/fake_rplidar_provider/data.json') as f:
+        path: str = '/home/kiv/projects/rplidar-back/grabbed_data/data/5dm_5hz_dump.json'
+        # path: str = './components/lidar_providers/fake_rplidar_provider/data.json'
+        self.grabbed_data = []
+        with open(path, 'r') as f:
             data = json.load(f)
-            self.grabbed_data = [
-                [LidarScanPoint(quality=point[0], angle=point[1], distance=point[2]) for point in scan]
-                for scan in data
-            ]
+            for item in data:
+                points_array = [
+                    LidarScanPoint(x=point[0],
+                                   y=point[1],
+                                   quality=point[2],
+                                   angle=point[3],
+                                   distance=point[4])
+                    for point in item['points']
+                ]
+                self.grabbed_data.append(points_array)
+                # for point in item['points']:
+                #     points_array = []
+                #     self.grabbed_data.append([LidarScanPoint(x=point[0],
+                #                                              y=point[1],
+                #                                              quality=point[2],
+                #                                              angle=point[3],
+                #                                              distance=point[4])
+                #                           ])
+            # data = json.load(f)
+            # self.grabbed_data = [
+            #     [LidarScanPoint(quality=point[0], angle=point[1], distance=point[2]) for point in scan]
+            #     for scan in data
+            # ]
+        # print(self.grabbed_data)
 
     @property
     def info(self) -> Optional[Dict[str, Any]]:

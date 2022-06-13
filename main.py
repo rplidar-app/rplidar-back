@@ -6,12 +6,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from components.lidar_providers.rplidar_provider.rpLidarProvider import RpLidarProvider
 from components.lidar_providers.fake_rplidar_provider.fakeRpLidarProvider import FakeRpLidarProvider
 from components.work_area_provider.workAreaProvider import WorkAreaProvider
+from models.lidarScan import LidarScan
+import json
 
 
 # lidar = RpLidarProvider('COM4')
 work_area = WorkAreaProvider()
 lidar = FakeRpLidarProvider(work_area, 'COM4')
-# lidar = RpLidarProvider('/dev/ttyUSB0')
+# lidar = RpLidarProvider(work_area, '/dev/ttyUSB0')
 print('Lidar connection status:', lidar.connect())
 print('Lidar info:', lidar.info)
 print('Lidar health:', lidar.health)
@@ -36,9 +38,29 @@ def read_root():
     return {"Hello": "World"}
 
 
+counter = 0
+list_to_dump = []
+
+
 @app.get('/lidar/scan')
 def read_scan():
     scan = lidar.scans
+    if scan is None:
+        return LidarScan().represent_points_as_tuples()
+    # print(scan.represent_points_as_tuples()['objects'])
+    # --------- DUMPER BEGIN ---------
+    # global list_to_dump
+    # list_to_dump.append(scan.represent_points_as_tuples()['objects'][0])
+    # global counter
+    # counter += 1
+    # # print(list_to_dump)
+    # print(counter)
+    # if counter <= 999:
+    #     list_to_dump.append(scan.represent_points_as_tuples()['objects'][0])
+    # if counter == 999:
+    #     with open('25dm_5.5hz_dump.json', 'a') as f:
+    #         json.dump(list_to_dump, f)
+    # --------- DUMPER END ---------
     return scan.represent_points_as_tuples()
 
 
